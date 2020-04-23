@@ -33,12 +33,26 @@ const alphabet = [
   'Z'
 ];
 
+const formatNumber = number => `0${number}`.slice(-2);
+
+const getRemaining = time => {
+  const mins = Math.floor(time / 60);
+  const secs = time - mins * 60;
+  return { mins: formatNumber(mins), secs: formatNumber(secs) };
+};
+
 const App = () => {
   const [started, setStarted] = useState(false);
   const [letterDrawn, setLetterDrawn] = useState(null);
   const [newLetterDrawn, setNewLetterDrawn] = useState(null);
   const [disabled, setDisabled] = useState(false);
+  const [playAgain, setPlayAgain] = useState(false);
   const [alphabetCopy, setAlphabetCopy] = useState(alphabet);
+
+  const [remainingSecs, setRemainingSecs] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+
+  const { mins, secs } = getRemaining(remainingSecs);
 
   const handleLetterDrawn = () => {
     if (letterDrawn === null) return setDisabled(false);
@@ -50,8 +64,51 @@ const App = () => {
     handleLetterDrawn();
   }, [letterDrawn]);
 
+  useEffect(() => {
+    if (letterDrawn === null) return setPlayAgain(false);
+    if (letterDrawn.length === 26 && remainingSecs === 0)
+      return setPlayAgain(true);
+    return setPlayAgain(false);
+  }, [letterDrawn, remainingSecs]);
+
+  const handleReset = () => {
+    setStarted(false);
+    setLetterDrawn(null);
+    setNewLetterDrawn(null);
+    setDisabled(false);
+    setAlphabetCopy(alphabet);
+  };
+
+  const toggle = () => {
+    setIsActive(!isActive);
+  };
+
+  const reset = () => {
+    setIsActive(false);
+  };
+
+  useEffect(() => {
+    if (remainingSecs === 0) {
+      reset();
+      return setDisabled(false);
+    }
+    let interval = null;
+    if (isActive) {
+      setDisabled(true);
+      interval = setInterval(() => {
+        setRemainingSecs(seconds => seconds - 1);
+      }, 1000);
+    } else if (!isActive && remainingSecs !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, remainingSecs]);
+
   const handleStarted = () => {
+    setRemainingSecs(120);
+    setPlayAgain(false);
     if (started) {
+      toggle();
       setNewLetterDrawn(Math.floor(Math.random() * (alphabetCopy.length - 1)));
 
       if (letterDrawn === null) {
@@ -67,14 +124,6 @@ const App = () => {
     } else {
       setStarted(true);
     }
-  };
-
-  const handleReset = () => {
-    setStarted(false);
-    setLetterDrawn(null);
-    setNewLetterDrawn(null);
-    setDisabled(false);
-    setAlphabetCopy(alphabet);
   };
 
   return (
@@ -101,15 +150,15 @@ const App = () => {
             <StyledText fontSize={100}>
               {alphabetCopy[newLetterDrawn]}
             </StyledText>
-            <StyledTimer>02:00:00</StyledTimer>
+            <StyledTimer>{`${mins}:${secs}`}</StyledTimer>
           </>
         ) : null}
-        <StyledButton disabled={disabled} onPress={handleStarted}>
+        <StyledButton disabled={disabled || playAgain} onPress={handleStarted}>
           <StyledText color={COLORS.white}>
             {started ? 'Sortear' : 'Iniciar'}
           </StyledText>
         </StyledButton>
-        {disabled ? (
+        {playAgain ? (
           <StyledButton onPress={handleReset}>
             <StyledText color={COLORS.white}>Jogar novamente</StyledText>
           </StyledButton>
