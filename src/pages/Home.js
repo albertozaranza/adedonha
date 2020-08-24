@@ -1,21 +1,43 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import { Switch } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 
 import TimeContext from '@/context/time';
+import ThemeContext from '@/context/theme';
 
 import colors from '@/configs/colors';
 import constants from '@/configs/constants';
 import strings from '@/configs/strings';
 
+const handleColor = (disabled, theme) => {
+  if (disabled && theme.title === 'dark') return colors.gray;
+  if (disabled) return colors.primaryDisabled;
+  return colors.primary;
+};
+
 const Home = () => {
   const { navigate } = useNavigation();
 
   const { time, setTime } = useContext(TimeContext);
+  const { toggleTheme } = useContext(ThemeContext);
+
+  const [enabled, setEnabled] = useState(false);
 
   return (
     <StyledView>
+      <StyledHeader>
+        <Switch
+          value={enabled}
+          onValueChange={() => {
+            setEnabled(!enabled);
+            toggleTheme();
+          }}
+          trackColor={{ false: colors.gray, true: colors.gray }}
+          thumbColor={!enabled ? colors.dark : colors.warning}
+        />
+      </StyledHeader>
       <StyledContainer>
         <StyledTitle>{strings.appName}</StyledTitle>
         <StyledPickerContainer>
@@ -77,8 +99,7 @@ const StyledButton = styled.TouchableOpacity`
   width: 90%;
   justify-content: center;
   align-items: center;
-  background-color: ${({ disabled }) =>
-    disabled ? colors.primaryDisabled : colors.primary};
+  background-color: ${({ disabled, theme }) => handleColor(disabled, theme)};
   border-radius: 24px;
   font-family: 'Roboto-Regular';
 `;
@@ -94,6 +115,19 @@ const StyledPicker = styled(Picker)`
 const StyledPickerBox = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #ccc;
+`;
+
+const StyledHeader = styled.View`
+  height: 48px;
+  width: 60px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.background};
+  position: absolute;
+  top: 16px;
+  right: 4px;
+  z-index: 1;
+  elevation: 0.05;
 `;
 
 export default Home;

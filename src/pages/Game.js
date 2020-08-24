@@ -13,9 +13,10 @@ import { getRemaining } from '@/utils';
 
 import icBack from '@/assets/icons/icBack.png';
 
-const handleColor = (disabled, playAgain) => {
-  if (playAgain) return colors.danger;
+const handleColor = (disabled, playAgain, theme) => {
+  if (disabled && theme.title === 'dark') return colors.gray;
   if (disabled) return colors.primaryDisabled;
+  if (playAgain) return colors.danger;
   return colors.primary;
 };
 
@@ -207,8 +208,8 @@ const StyledButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   margin-top: 16px;
-  background-color: ${({ disabled, playAgain }) =>
-    handleColor(disabled, playAgain)};
+  background-color: ${({ disabled, playAgain, theme }) =>
+    handleColor(disabled, playAgain, theme)};
   border-radius: 24px;
   font-family: 'Roboto-Regular';
 `;
