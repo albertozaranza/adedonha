@@ -7,6 +7,7 @@ import TimeContext from '@/context/time';
 
 import colors from '@/configs/colors';
 import constants from '@/configs/constants';
+import strings from '@/configs/strings';
 
 const App = () => {
   const { navigate } = useNavigation();
@@ -15,9 +16,9 @@ const App = () => {
 
   return (
     <StyledView>
-      <StyledTitle>Adedonha</StyledTitle>
+      <StyledTitle>{strings.appName}</StyledTitle>
       <StyledPickerContainer>
-        <StyledTextTime>Selecione o tempo</StyledTextTime>
+        <StyledTextTime>{strings.selectTime}</StyledTextTime>
         <StyledPickerBox>
           <Picker
             selectedValue={time}
@@ -30,7 +31,7 @@ const App = () => {
         </StyledPickerBox>
       </StyledPickerContainer>
       <StyledButton disabled={time === 0} onPress={() => navigate('Game')}>
-        <StyledText color={colors.white}>Iniciar</StyledText>
+        <StyledText color={colors.white}>{strings.start}</StyledText>
       </StyledButton>
     </StyledView>
   );

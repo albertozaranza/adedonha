@@ -7,6 +7,7 @@ import TimeContext from '@/context/time';
 
 import colors from '@/configs/colors';
 import constants from '@/configs/constants';
+import strings from '@/configs/strings';
 
 import { getRemaining } from '@/utils';
 
@@ -114,7 +115,7 @@ const Game = () => {
       </StyledHeader>
       <StyledContainer>
         <StyledText fontSize={24} fontWeight='bold'>
-          Letras já sorteadas:
+          {strings.lettersDrawn}
         </StyledText>
         <StyledText fontSize={18}>
           {letterDrawn !== null
@@ -131,7 +132,7 @@ const Game = () => {
           onPress={playAgain ? handleReset : handleStarted}
         >
           <StyledText color={colors.white}>
-            {playAgain ? 'Jogar novamente' : 'Sortear'}
+            {playAgain ? strings.playAgain : strings.draw}
           </StyledText>
         </StyledButton>
         {!playAgain && remainingSeconds < time - 4 && letterDrawn?.length > 0 && (
@@ -139,7 +140,7 @@ const Game = () => {
             disabled={remainingSeconds === 0}
             onPress={() => setRemainingSeconds(0)}
           >
-            <StyledText color={colors.white}>Encerrar rodada</StyledText>
+            <StyledText color={colors.white}>{strings.finishRound}</StyledText>
           </StyledButton>
         )}
         {playAgain && (
@@ -148,7 +149,7 @@ const Game = () => {
             onPress={goBack}
             playAgain={playAgain}
           >
-            <StyledText color={colors.white}>Voltar</StyledText>
+            <StyledText color={colors.white}>{strings.back}</StyledText>
           </StyledButton>
         )}
       </StyledContainer>
