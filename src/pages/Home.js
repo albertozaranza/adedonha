@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Switch } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import { useNavigation } from '@react-navigation/native';
@@ -21,21 +21,18 @@ const Home = () => {
   const { navigate } = useNavigation();
 
   const { time, setTime } = useContext(TimeContext);
-  const { toggleTheme } = useContext(ThemeContext);
-
-  const [enabled, setEnabled] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <StyledView>
       <StyledHeader>
         <Switch
-          value={enabled}
+          value={theme.title !== 'light'}
           onValueChange={() => {
-            setEnabled(!enabled);
             toggleTheme();
           }}
           trackColor={{ false: colors.gray, true: colors.gray }}
-          thumbColor={!enabled ? colors.dark : colors.warning}
+          thumbColor={theme.title !== 'light' ? colors.warning : colors.dark}
         />
       </StyledHeader>
       <StyledContainer>
