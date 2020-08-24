@@ -9,30 +9,32 @@ import colors from '@/configs/colors';
 import constants from '@/configs/constants';
 import strings from '@/configs/strings';
 
-const App = () => {
+const Home = () => {
   const { navigate } = useNavigation();
 
   const { time, setTime } = useContext(TimeContext);
 
   return (
     <StyledView>
-      <StyledTitle>{strings.appName}</StyledTitle>
-      <StyledPickerContainer>
-        <StyledTextTime>{strings.selectTime}</StyledTextTime>
-        <StyledPickerBox>
-          <Picker
-            selectedValue={time}
-            onValueChange={itemValue => setTime(itemValue)}
-          >
-            {constants.minutes.map(({ label, value }) => (
-              <Picker.Item key={label} label={label} value={value} />
-            ))}
-          </Picker>
-        </StyledPickerBox>
-      </StyledPickerContainer>
-      <StyledButton disabled={time === 0} onPress={() => navigate('Game')}>
-        <StyledText color={colors.white}>{strings.start}</StyledText>
-      </StyledButton>
+      <StyledContainer>
+        <StyledTitle>{strings.appName}</StyledTitle>
+        <StyledPickerContainer>
+          <StyledTextTime>{strings.selectTime}</StyledTextTime>
+          <StyledPickerBox>
+            <StyledPicker
+              selectedValue={time}
+              onValueChange={itemValue => setTime(itemValue)}
+            >
+              {constants.minutes.map(({ label, value }) => (
+                <StyledPicker.Item key={label} label={label} value={value} />
+              ))}
+            </StyledPicker>
+          </StyledPickerBox>
+        </StyledPickerContainer>
+        <StyledButton disabled={time === 0} onPress={() => navigate('Game')}>
+          <StyledText color={colors.white}>{strings.start}</StyledText>
+        </StyledButton>
+      </StyledContainer>
     </StyledView>
   );
 };
@@ -40,12 +42,17 @@ const App = () => {
 const StyledView = styled.View`
   flex: 1;
   padding: 0 16px;
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const StyledContainer = styled.View`
+  flex: 1;
   justify-content: space-around;
   align-items: center;
-  background-color: ${colors.white};
 `;
 
 const StyledTitle = styled.Text`
+  color: ${({ theme }) => theme.colors.text};
   font-size: 60px;
   font-family: 'Roboto-Regular';
 `;
@@ -53,7 +60,7 @@ const StyledTitle = styled.Text`
 const StyledText = styled.Text`
   margin: 8px 0;
   margin: 0 32px;
-  color: ${({ color }) => color || colors.black};
+  color: ${({ theme, color }) => color || theme.colors.text};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '16px')};
   font-weight: ${({ fontWeight }) => fontWeight || 'normal'};
   font-family: 'Roboto-Regular';
@@ -80,9 +87,13 @@ const StyledPickerContainer = styled.View`
   width: 100%;
 `;
 
+const StyledPicker = styled(Picker)`
+  color: ${({ theme }) => theme.colors.text};
+`;
+
 const StyledPickerBox = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #ccc;
 `;
 
-export default App;
+export default Home;

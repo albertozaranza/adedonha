@@ -159,12 +159,14 @@ const Game = () => {
 
 const StyledView = styled.View`
   flex: 1;
-  background-color: ${colors.white};
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const StyledHeader = styled.View`
   height: 64px;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   padding-left: 16px;
 `;
 
@@ -172,7 +174,7 @@ const StyledContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${colors.white};
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const StyledRectButton = styled.TouchableOpacity`
@@ -183,9 +185,8 @@ const StyledRectButton = styled.TouchableOpacity`
 `;
 
 const StyledText = styled.Text`
-  margin: 8px 0;
-  margin: 0 32px;
-  color: ${({ color }) => color || colors.black};
+  margin: 8px 32px;
+  color: ${({ theme, color }) => color || theme.colors.text};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '16px')};
   font-weight: ${({ fontWeight }) => fontWeight || 'normal'};
   font-family: 'Roboto-Regular';
@@ -194,6 +195,7 @@ const StyledText = styled.Text`
 
 const StyledTimer = styled.Text`
   margin: 0 32px;
+  color: ${({ theme }) => theme.colors.text};
   font-size: 36px;
   font-weight: bold;
   font-family: 'Roboto-Regular';
