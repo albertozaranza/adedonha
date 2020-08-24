@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Picker } from '@react-native-community/picker';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 
+import TimeContext from '@/context/time';
+
 import colors from '@/configs/colors';
+import constants from '@/configs/constants';
 
 const App = () => {
   const { navigate } = useNavigation();
+
+  const { time, setTime } = useContext(TimeContext);
+
   return (
     <StyledView>
       <StyledTitle>Adedonha</StyledTitle>
-      <StyledButton onPress={() => navigate('Game')}>
+      <StyledPickerContainer>
+        <StyledTextTime>Selecione o tempo</StyledTextTime>
+        <StyledPickerBox>
+          <Picker
+            selectedValue={time}
+            onValueChange={itemValue => setTime(itemValue)}
+          >
+            {constants.minutes.map(({ label, value }) => (
+              <Picker.Item key={label} label={label} value={value} />
+            ))}
+          </Picker>
+        </StyledPickerBox>
+      </StyledPickerContainer>
+      <StyledButton disabled={time === 0} onPress={() => navigate('Game')}>
         <StyledText color={colors.white}>Iniciar</StyledText>
       </StyledButton>
     </StyledView>
@@ -18,7 +38,7 @@ const App = () => {
 
 const StyledView = styled.View`
   flex: 1;
-  padding: 0 50px;
+  padding: 0 16px;
   justify-content: space-around;
   align-items: center;
   background-color: ${colors.white};
@@ -39,6 +59,11 @@ const StyledText = styled.Text`
   text-align: center;
 `;
 
+const StyledTextTime = styled(StyledText)`
+  margin: 0 0 8px 4px;
+  text-align: left;
+`;
+
 const StyledButton = styled.TouchableOpacity`
   height: 50px;
   width: 90%;
@@ -48,6 +73,15 @@ const StyledButton = styled.TouchableOpacity`
     disabled ? colors.primaryDisabled : colors.primary};
   border-radius: 24px;
   font-family: 'Roboto-Regular';
+`;
+
+const StyledPickerContainer = styled.View`
+  width: 100%;
+`;
+
+const StyledPickerBox = styled.View`
+  border-bottom-width: 1px;
+  border-bottom-color: #ccc;
 `;
 
 export default App;

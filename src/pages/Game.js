@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
+
+import TimeContext from '@/context/time';
 
 import colors from '@/configs/colors';
 import constants from '@/configs/constants';
@@ -19,16 +21,18 @@ const handleColor = (disabled, playAgain) => {
 const Game = () => {
   const { goBack } = useNavigation();
 
+  const { time } = useContext(TimeContext);
+
+  const [remainingSeconds, setRemainingSeconds] = useState(time);
   const [letterDrawn, setLetterDrawn] = useState(null);
   const [newLetterDrawn, setNewLetterDrawn] = useState(null);
   const [disabled, setDisabled] = useState(false);
   const [playAgain, setPlayAgain] = useState(false);
   const [alphabetCopy, setAlphabetCopy] = useState(constants.alphabet);
 
-  const [remainingSecs, setRemainingSecs] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
-  const { mins, secs } = getRemaining(remainingSecs);
+  const { mins, secs } = getRemaining(remainingSeconds);
 
   const handleLetterDrawn = useCallback(() => {
     if (letterDrawn === null) return setDisabled(false);
@@ -43,10 +47,13 @@ const Game = () => {
 
   useEffect(() => {
     if (letterDrawn === null) return setPlayAgain(false);
-    if (letterDrawn.length === constants.alphabet.length && remainingSecs === 0)
+    if (
+      letterDrawn.length === constants.alphabet.length &&
+      remainingSeconds === 0
+    )
       return setPlayAgain(true);
     return setPlayAgain(false);
-  }, [letterDrawn, remainingSecs]);
+  }, [letterDrawn, remainingSeconds]);
 
   const handleReset = () => {
     setLetterDrawn(null);
@@ -64,7 +71,7 @@ const Game = () => {
   };
 
   useEffect(() => {
-    if (remainingSecs === 0) {
+    if (remainingSeconds === 0) {
       reset();
       return setDisabled(false);
     }
@@ -72,16 +79,16 @@ const Game = () => {
     if (isActive) {
       setDisabled(true);
       interval = setInterval(() => {
-        setRemainingSecs(seconds => seconds - 1);
+        setRemainingSeconds(seconds => seconds - 1);
       }, 1000);
-    } else if (!isActive && remainingSecs !== 0) {
+    } else if (!isActive && remainingSeconds !== 0) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isActive, remainingSecs]);
+  }, [isActive, remainingSeconds, setRemainingSeconds]);
 
   const handleStarted = () => {
-    setRemainingSecs(120);
+    setRemainingSeconds(time);
     setPlayAgain(false);
     toggle();
     setNewLetterDrawn(Math.floor(Math.random() * (alphabetCopy.length - 1)));
@@ -127,6 +134,14 @@ const Game = () => {
             {playAgain ? 'Jogar novamente' : 'Sortear'}
           </StyledText>
         </StyledButton>
+        {!playAgain && remainingSeconds < time - 4 && letterDrawn?.length > 0 && (
+          <StyledButton
+            disabled={remainingSeconds === 0}
+            onPress={() => setRemainingSeconds(0)}
+          >
+            <StyledText color={colors.white}>Encerrar rodada</StyledText>
+          </StyledButton>
+        )}
         {playAgain && (
           <StyledButton
             disabled={disabled}
@@ -167,8 +182,8 @@ const StyledRectButton = styled.TouchableOpacity`
 `;
 
 const StyledText = styled.Text`
-  margin-vertical: 8px;
-  margin-horizontal: 32px;
+  margin: 8px 0;
+  margin: 0 32px;
   color: ${({ color }) => color || colors.black};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '16px')};
   font-weight: ${({ fontWeight }) => fontWeight || 'normal'};
@@ -177,7 +192,7 @@ const StyledText = styled.Text`
 `;
 
 const StyledTimer = styled.Text`
-  margin-vertical: 32px;
+  margin: 0 32px;
   font-size: 36px;
   font-weight: bold;
   font-family: 'Roboto-Regular';

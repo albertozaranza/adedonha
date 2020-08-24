@@ -4,24 +4,22 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Home, Game } from '@/pages';
 
-const Stack = createStackNavigator();
+import { TimeProvider } from '@/context/time';
 
-// const SignUpContextProvider = () => (
-//   <SignUpProvider>
-//     <SignUp />
-//   </SignUpProvider>
-// );
+const Stack = createStackNavigator();
 
 const Routes = () => (
   <NavigationContainer>
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false
-      }}
-    >
-      <Stack.Screen name='Home' component={Home} />
-      <Stack.Screen name='Game' component={Game} />
-    </Stack.Navigator>
+    <TimeProvider>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false
+        }}
+      >
+        <Stack.Screen name='Home' component={Home} />
+        <Stack.Screen name='Game' component={Game} />
+      </Stack.Navigator>
+    </TimeProvider>
   </NavigationContainer>
 );
 
